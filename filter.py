@@ -41,7 +41,7 @@ print(frequency_sorted[:30])
 # %%
 reverses = []
 for key in frequency:
-    if key[::-1] in frequency:
+    if key[::-1] in frequency and key[::-1]:
         reverses.append((min(frequency[key], frequency[key[::-1]]), key))
 reverses_sorted = sorted(reverses, reverse=True)
 print(reverses_sorted[:30])
