@@ -25,10 +25,10 @@ for file_name in sorted(glob.glob("text/cleaned/*/wiki*")):
         text += f.read()
 print("read",len(text),"characters")
 # %%
-ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b"]
+ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b", "·"]
 frequency = dict()
 for i in range(len(text)-1):
-    seq = text[i:i+2]
+    seq = text[i:i+6]
     if any([character in seq for character in ignore]) or seq[0] == seq[1]:
         continue
     if seq not in frequency:
