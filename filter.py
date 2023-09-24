@@ -1,5 +1,15 @@
 # %%
 import re, glob
+from tqdm import tqdm
+import gzip
+
+def save_text_as_gzip(text, filename):
+    with gzip.open(filename, 'wt', encoding='utf-8') as file:
+        file.write(text)
+def load_text_from_gzip(filename):
+    with gzip.open(filename, 'rt', encoding='utf-8') as file:
+        text = file.read()
+    return text
 
 def remove_latin(text):
     return re.sub(r"[（），。？！《》A-Za-z0-9\(\){}\[\]\?\!\._+|\\,`~\-=/<>%$#@*^:;]+", "_", text)
@@ -23,26 +33,50 @@ text = ""
 for file_name in sorted(glob.glob("text/cleaned/*/wiki*")):
     with open(file_name, encoding="utf-8") as f:
         text += f.read()
+save_text_as_gzip(text, "chinese_text.txt.gz")
 print("read",len(text),"characters")
 # %%
-ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b", "·"]
-frequency = dict()
-for i in range(len(text)-1):
-    seq = text[i:i+6]
-    if any([character in seq for character in ignore]) or seq[0] == seq[1]:
-        continue
-    if seq not in frequency:
-        frequency[seq] = 1
-    else:
-        frequency[seq] += 1
-# [frequency.pop(character) for character in ignore]
-frequency_sorted = sorted(list(zip(list(frequency.values()), zip(list(frequency.keys())))), reverse=True)
-print(frequency_sorted[:30])
+def dict_frequency(dictionary, top = 30):
+    frequency_sorted = sorted(list(zip(list(dictionary.values()), zip(list(dictionary.keys())))), reverse=True)
+    return(frequency_sorted[:top])
+def ngrams(n, ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b", "·"]):
+    frequency = dict()
+    for i in tqdm(range(len(text)-1)):
+        seq = text[i:i+n]
+        if any([character in seq for character in ignore]) or len(set(seq)) != n:
+            continue
+        if seq not in frequency:
+            frequency[seq] = 1
+        else:
+            frequency[seq] += 1
+    return frequency
+    # [frequency.pop(character) for character in ignore]
+
 # %%
-reverses = []
-for key in frequency:
-    if key[::-1] in frequency and key[::-1]:
-        reverses.append((min(frequency[key], frequency[key[::-1]]), key))
-reverses_sorted = sorted(reverses, reverse=True)
-print(reverses_sorted[:30])
+frequency = ngrams(4)
+# %%
+print("found", len(frequency), "ngrams")
+def common_reverse(frequency, min_frequency = 30):
+    reverses = []
+    for key in frequency:
+        if frequency[key] >= min_frequency:
+            reverse_key = key[::-1]
+            if reverse_key in frequency and reverse_key<key and frequency[reverse_key]>=min_frequency:
+                reverses.append((min(frequency[key], frequency[reverse_key]), key))
+    reverses_sorted = sorted(reverses, reverse=True)
+    return(reverses_sorted)
+# %%
+reverses = common_reverse(frequency, 20)
+print("found", len(reverses), "reverses")
+
+chars = dict()
+
+for count,reverse in reverses:
+    for char in reverse:
+        if char not in chars:
+            chars[char] = 1
+        else:
+            chars[char] += 1
+
+
 # %%
