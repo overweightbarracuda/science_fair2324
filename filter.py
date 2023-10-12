@@ -37,26 +37,32 @@ print(t)
 # save_text_as_gzip(text, "chinese_text.txt.gz")
 # print("read",len(text),"characters")
 #%%
-text = load_text_from_gzip("chinese_text.txt.gz")
+#text = load_text_from_gzip("chinese_text.txt.gz")
 # %%
+import glob
 def dict_frequency(dictionary, top = 30):
     frequency_sorted = sorted(list(zip(list(dictionary.values()), zip(list(dictionary.keys())))), reverse=True)
     return(frequency_sorted[:top])
 def ngrams(n, ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b", "·"]):
+    filenames = glob.glob("text/*.gz")
     frequency = dict()
-    for i in tqdm(range(len(text)-1)):
-        seq = text[i:i+n]
-        if any([character in seq for character in ignore]) or len(set(seq)) != n:
-            continue
-        if seq not in frequency:
-            frequency[seq] = 1
-        else:
-            frequency[seq] += 1
+    filenames.sort()
+    for file in filenames:
+        print(file)
+        text = load_text_from_gzip(file)
+        for i in tqdm(range(len(text)-1)):
+            seq = text[i:i+n]
+            if any([character in seq for character in ignore]) or len(set(seq)) != n:
+                continue
+            if seq not in frequency:
+                frequency[seq] = 1
+            else:
+                frequency[seq] += 1
     return frequency
     # [frequency.pop(character) for character in ignore]
 
 # %%
-frequency = ngrams(4)
+frequency = ngrams(3)
 # %%
 def get_permutations(input_string):
     # Use permutations to generate all possible permutations of the input string
