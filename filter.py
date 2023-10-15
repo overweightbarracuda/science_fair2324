@@ -3,6 +3,7 @@ import re, glob
 from tqdm import tqdm
 import gzip
 from itertools import permutations
+import pickle as pkl
 
 def save_text_as_gzip(text, filename):
     with gzip.open(filename, 'wt', encoding='utf-8') as file:
@@ -44,7 +45,7 @@ def dict_frequency(dictionary, top = 30):
     frequency_sorted = sorted(list(zip(list(dictionary.values()), zip(list(dictionary.keys())))), reverse=True)
     return(frequency_sorted[:top])
 def ngrams(n, ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b", "·"]):
-    filenames = glob.glob("text/*.gz")
+    filenames = glob.glob("text/chinese_text_*.gz")
     frequency = dict()
     filenames.sort()
     for file in filenames:
@@ -58,11 +59,15 @@ def ngrams(n, ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b"
                 frequency[seq] = 1
             else:
                 frequency[seq] += 1
+        break
     return frequency
     # [frequency.pop(character) for character in ignore]
 
 # %%
-frequency = ngrams(3)
+frequency = ngrams(1)
+# %%
+with open("data/1grams.pkl", "wb") as f:
+    pkl.dump(frequency, f)
 # %%
 def get_permutations(input_string):
     # Use permutations to generate all possible permutations of the input string
