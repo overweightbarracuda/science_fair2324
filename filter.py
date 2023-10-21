@@ -64,10 +64,11 @@ def ngrams(n, ignore = ["\n", " ", "_", "：", "、", "\u3000", "\xa0", "\u200b"
     # [frequency.pop(character) for character in ignore]
 
 # %%
-frequency = ngrams(1)
+# frequency = ngrams(1)
+
 # %%
-with open("data/1grams.pkl", "wb") as f:
-    pkl.dump(frequency, f)
+# with open("data/1grams.pkl", "wb") as f:
+#     pkl.dump(frequency, f)
 # %%
 def get_permutations(input_string):
     # Use permutations to generate all possible permutations of the input string
@@ -79,7 +80,7 @@ def get_permutations(input_string):
     return list(set(perm_list))
 get_permutations("aa")
 # %%
-print("found", len(frequency), "ngrams")
+# print("found", len(frequency), "ngrams")
 def common_reverse(frequency, min_frequency = 30):
     reverses = []
     for key in frequency:
@@ -92,12 +93,15 @@ def common_reverse(frequency, min_frequency = 30):
 #%%
 def common_perms(frequency, min_frequency = 30):
     permutations = []
-    for key in frequency:
+    for key in tqdm(frequency):
         if frequency[key] >= min_frequency:
+            if any(key[i] >= key[i+1] for i in range(len(key)-1)):
+                continue
+                    
             key_permutations = get_permutations(key)
             min_count = 100000000
             for permutation in key_permutations:
-                if permutation not in frequency or permutation>key or frequency[permutation]<min_frequency:
+                if permutation not in frequency or frequency[permutation]<min_frequency:
                     min_count = 0
                     break
                 else:
@@ -106,7 +110,13 @@ def common_perms(frequency, min_frequency = 30):
                 permutations.append((min_count, key))
     sorted_perms = sorted(permutations, reverse = True)
     return sorted_perms
-
+# %%
+i = 4
+with open(f"data/{i}grams.pkl", "rb") as f:
+    freq = pkl.load(f)
+    print("Loaded file")
+    common = common_perms(freq,10)
+print(len(common))
 # %%
 perms = common_perms(frequency, 1)
 print("found", len(perms), "reverses")
