@@ -115,8 +115,8 @@ i = 4
 with open(f"data/{i}grams.pkl", "rb") as f:
     freq = pkl.load(f)
     print("Loaded file")
-    common = common_perms(freq,10)
-print(len(common))
+    common = common_perms(freq,1)
+print(common)
 # %%
 perms = common_perms(frequency, 1)
 print("found", len(perms), "reverses")
