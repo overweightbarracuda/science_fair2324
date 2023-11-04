@@ -90,7 +90,7 @@ def find_strings_with_separator(n, ignore=["\n", "\u3000", "\xa0", "\u200b", "·
                     frequency[seq] += 1
     return frequency
 #%%
-for n in [3,6]:
+for n in [4,8]:
     print("n is: ",n)
     frequency = find_strings_with_separator(n)
     with open("data/"+str(n) +"seps.pkl", "wb") as f:
@@ -99,7 +99,7 @@ for n in [3,6]:
 import pickle as pkl
 from tqdm import tqdm
 
-i = 6
+i = 8
 with open(f"data/{i}seps.pkl", "rb") as f:
     freq = pkl.load(f)
     print("Loaded file")
