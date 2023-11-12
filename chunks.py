@@ -3,7 +3,7 @@ import glob
 import tqdm
 import gzip
 
-digits = "一二三四五六七八九"
+digits = "〇一二三四五六七八九"
 
 def save_text_as_gzip(text, filename):
     with gzip.open(filename, 'wt', encoding='utf-8') as file:
@@ -15,16 +15,16 @@ def load_text_from_gzip(filename):
 
 def replace_digits(text:str):
     replaced = text
-    for i in range(9):
-        replaced = replaced.replace(digits[i], str(i+1))
+    for i in range(10):
+        replaced = replaced.replace(digits[i], str(i))
     return replaced
 
 print(replace_digits("三一四一"))
 
-for file in tqdm.tqdm(sorted(glob.glob("text/chinese_text_AA*.gz"))):
+for file in tqdm.tqdm(sorted(glob.glob("text/chinese_text_*.gz"))):
     text = load_text_from_gzip(file)
     print(file)
     new_text = replace_digits(text)
-    with open("text/replaced_digits/AA.txt", "wt", encoding='utf-8') as f:
+    with open(file.replace("chinese", "replaced_digits/chinese")[:-3], "wt", encoding='utf-8') as f:
         f.write(new_text)
     
