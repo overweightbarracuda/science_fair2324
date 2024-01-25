@@ -111,12 +111,13 @@ def common_perms(frequency, min_frequency = 30):
     sorted_perms = sorted(permutations, reverse = True)
     return sorted_perms
 # %%
-i = 4
+i = 1
 with open(f"data/{i}grams.pkl", "rb") as f:
     freq = pkl.load(f)
     print("Loaded file")
-    common = common_perms(freq,1)
-print(common)
+print(freq.sort())
+    #common = common_perms(freq,1)
+#print(common)
 # %%
 perms = common_perms(frequency, 1)
 print("found", len(perms), "reverses")
